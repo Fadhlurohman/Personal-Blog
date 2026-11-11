@@ -2,7 +2,7 @@
 
 @layer base {
   :root {
-    --background: #fbfbfb;
+    --background: #fafaf9;
     --foreground: #1c1917;
     --muted: #78716c;
     --border: #e7e5e4;
@@ -21,6 +21,11 @@
     }
   }
 
+  * {
+    border-color: var(--border);
+    box-sizing: border-box;
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
@@ -28,12 +33,39 @@
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Prevent unstyled link appearance */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Safe icon and media defaults */
+  svg {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  img, video {
+    max-width: 100%;
+    height: auto;
   }
 }
 
-/* Smooth transition for theme colors */
-* {
-  border-color: var(--border);
+::selection {
+  background-color: #292524;
+  color: #fafaf9;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: #e7e5e4;
+    color: #0c0a09;
+  }
 }
 
 /* Custom scrollbar for minimalist look */
