@@ -6,7 +6,7 @@
 INSERT INTO public.site_settings (id, site_name, site_description, social_links)
 VALUES (
   '00000000-0000-0000-0000-000000000001',
-  'The Memoir',
+  'Memoir',
   'Ruang digital minimalis untuk berbagi tulisan, cerita, foto, dan video perjalanan hidup.',
   '{"github": "", "twitter": "https://x.com/navntn", "instagram": "https://instagram.com/navntn", "linkedin": "", "email": "fadhlurohmanfn@gmail.com"}'::jsonb
 )

@@ -46,7 +46,7 @@ export default function AdminNav() {
           className="group flex items-center gap-2 mb-6 px-2 font-serif text-lg font-medium tracking-tight text-stone-900 dark:text-stone-100 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
         >
           <Feather className="w-5 h-5 text-stone-700 dark:text-stone-300 group-hover:rotate-12 transition-transform" />
-          <span>The Memoir</span>
+          <span>Memoir</span>
         </Link>
 
         <nav className="space-y-1">
@@ -60,11 +60,10 @@ export default function AdminNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
                     ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 font-semibold'
                     : 'text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60'
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4 shrink-0" />
                 <span>{item.label}</span>
