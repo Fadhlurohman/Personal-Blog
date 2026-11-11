@@ -236,17 +236,38 @@ export interface PostInput {
   }>;
 }
 
+async function getUniqueSlug(baseSlug: string, excludeId?: string): Promise<string> {
+  const supabase = await createClient();
+  let slug = baseSlug?.trim() || 'post';
+  let counter = 1;
+
+  while (true) {
+    let query = supabase.from('posts').select('id').eq('slug', slug);
+    if (excludeId) {
+      query = query.neq('id', excludeId);
+    }
+    const { data } = await query.maybeSingle();
+    if (!data) {
+      return slug;
+    }
+    counter++;
+    slug = `${baseSlug}-${counter}`;
+  }
+}
+
 export async function createPost(input: PostInput): Promise<{ post?: Post; error?: string }> {
   const supabase = await createClient();
 
   const publishedAt =
     input.status === 'published' ? input.published_at || new Date().toISOString() : null;
 
+  const uniqueSlug = await getUniqueSlug(input.slug);
+
   const { data: postData, error: postError } = await supabase
     .from('posts')
     .insert({
       title: input.title,
-      slug: input.slug,
+      slug: uniqueSlug,
       content: input.content,
       status: input.status,
       comments_enabled: input.comments_enabled ?? true,
@@ -286,7 +307,9 @@ export async function updatePost(
 
   const updateData: any = {};
   if (input.title !== undefined) updateData.title = input.title;
-  if (input.slug !== undefined) updateData.slug = input.slug;
+  if (input.slug !== undefined) {
+    updateData.slug = await getUniqueSlug(input.slug, id);
+  }
   if (input.content !== undefined) updateData.content = input.content;
   if (input.status !== undefined) {
     updateData.status = input.status;

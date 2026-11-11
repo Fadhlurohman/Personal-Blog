@@ -20,6 +20,16 @@ interface PostEditorProps {
   isEditing?: boolean;
 }
 
+function getLocalDateTimeString(date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 export default function PostEditor({ initialPost, isEditing = false }: PostEditorProps) {
   const router = useRouter();
 
@@ -32,8 +42,8 @@ export default function PostEditor({ initialPost, isEditing = false }: PostEdito
   );
   const [publishedAt, setPublishedAt] = useState(
     initialPost?.published_at
-      ? new Date(initialPost.published_at).toISOString().slice(0, 16)
-      : new Date().toISOString().slice(0, 16)
+      ? getLocalDateTimeString(new Date(initialPost.published_at))
+      : getLocalDateTimeString(new Date())
   );
 
   // Media items state
@@ -341,9 +351,18 @@ export default function PostEditor({ initialPost, isEditing = false }: PostEdito
 
         {/* Publication Date */}
         <div>
-          <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-2">
-            Tanggal Publikasi
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider">
+              Tanggal Publikasi
+            </label>
+            <button
+              type="button"
+              onClick={() => setPublishedAt(getLocalDateTimeString(new Date()))}
+              className="text-[11px] text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 underline decoration-dotted transition"
+            >
+              Waktu Sekarang
+            </button>
+          </div>
           <input
             type="datetime-local"
             value={publishedAt}

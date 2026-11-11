@@ -16,12 +16,14 @@ export function formatDateTime(dateString: string | null | undefined): string {
   if (!dateString) return '';
   try {
     const date = new Date(dateString);
+    const timeZone = typeof window === 'undefined' ? 'Asia/Jakarta' : undefined;
     return new Intl.DateTimeFormat('id-ID', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
+      ...(timeZone ? { timeZone } : {}),
     }).format(date);
   } catch {
     return dateString;
