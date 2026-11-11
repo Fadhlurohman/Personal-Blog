@@ -1,8 +1,10 @@
 import PublicLayout from '@/components/PublicLayout';
-import { getProfile, getSiteSettings } from '@/lib/services/settings';
+import { getProfile, getSiteSettings, DEFAULT_PROFILE, DEFAULT_SETTINGS } from '@/lib/services/settings';
 import { GithubIcon, TwitterIcon, InstagramIcon, LinkedinIcon, MailIcon } from '@/components/SocialIcons';
 import { User } from 'lucide-react';
 import type { Metadata } from 'next';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Tentang Penulis',
@@ -10,7 +12,18 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [profile, settings] = await Promise.all([getProfile(), getSiteSettings()]);
+  let profile = DEFAULT_PROFILE;
+  let settings = DEFAULT_SETTINGS;
+
+  try {
+    const [profileRes, settingsRes] = await Promise.all([getProfile(), getSiteSettings()]);
+    profile = profileRes;
+    settings = settingsRes;
+  } catch (err: any) {
+    if (err?.digest?.startsWith?.('DYNAMIC_SERVER_USAGE')) throw err;
+    console.error('Error fetching about page data:', err);
+  }
+
   const social = settings.social_links || {};
 
   return (

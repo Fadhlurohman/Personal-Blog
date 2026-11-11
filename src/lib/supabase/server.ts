@@ -6,13 +6,21 @@ import type { Database } from '@/types/database';
 export async function createClient() {
   const cookieStore = await cookies();
 
-  const supabaseUrl = getCleanSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const supabaseUrl =
+    getCleanSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL) ||
+    'https://placeholder.supabase.co';
+  const supabaseAnonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder';
 
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
-        return cookieStore.getAll();
+        try {
+          return cookieStore.getAll();
+        } catch {
+          return [];
+        }
       },
       setAll(cookiesToSet) {
         try {
@@ -20,8 +28,7 @@ export async function createClient() {
             cookieStore.set(name, value, options as CookieOptions)
           );
         } catch {
-          // The `setAll` method was called from a Server Component.
-          // This can be ignored if you have middleware refreshing user sessions.
+          // Ignored in Server Component renders
         }
       },
     },

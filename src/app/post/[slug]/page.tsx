@@ -6,7 +6,7 @@ import { formatDateTime } from '@/lib/utils/format';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Calendar } from 'lucide-react';
 import type { Metadata } from 'next';
 
 interface PostPageProps {
@@ -15,46 +15,63 @@ interface PostPageProps {
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  try {
+    const post = await getPostBySlug(slug);
 
-  if (!post) {
+    if (!post) {
+      return {
+        title: 'Postingan Tidak Ditemukan',
+      };
+    }
+
+    const snippet = post.content.slice(0, 160).replace(/\n/g, ' ');
+    const firstImage = post.media?.find((m) => m.file_type === 'image')?.file_url;
+
     return {
-      title: 'Postingan Tidak Ditemukan',
-    };
-  }
-
-  const snippet = post.content.slice(0, 160).replace(/\n/g, ' ');
-  const firstImage = post.media?.find((m) => m.file_type === 'image')?.file_url;
-
-  return {
-    title: post.title,
-    description: snippet,
-    openGraph: {
       title: post.title,
       description: snippet,
-      type: 'article',
-      publishedTime: post.published_at || post.created_at,
-      images: firstImage ? [{ url: firstImage }] : [],
-    },
-  };
+      openGraph: {
+        title: post.title,
+        description: snippet,
+        type: 'article',
+        publishedTime: post.published_at || post.created_at,
+        images: firstImage ? [{ url: firstImage }] : [],
+      },
+    };
+  } catch {
+    return {
+      title: 'Artikel Blog',
+    };
+  }
 }
 
 export default async function PostDetailPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  let post = null;
+  try {
+    post = await getPostBySlug(slug);
+  } catch (err) {
+    console.error('Error fetching post:', err);
+  }
 
   if (!post) {
     notFound();
   }
 
-  const [comments, supabase] = await Promise.all([
-    getPostComments(post.id),
-    createClient(),
-  ]);
+  let comments: any[] = [];
+  let isAdmin = false;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const [commentsRes, supabase] = await Promise.all([
+      getPostComments(post.id),
+      createClient(),
+    ]);
+    comments = commentsRes;
+    const { data } = await supabase.auth.getUser();
+    isAdmin = !!data?.user;
+  } catch (err) {
+    console.error('Error loading post comments:', err);
+  }
 
   const mediaItems = post.media || [];
 
@@ -129,10 +146,9 @@ export default async function PostDetailPage({ params }: PostPageProps) {
           postId={post.id}
           commentsEnabled={post.comments_enabled}
           initialComments={comments}
-          isAdmin={!!user}
+          isAdmin={isAdmin}
         />
       </article>
     </PublicLayout>
   );
 }
-

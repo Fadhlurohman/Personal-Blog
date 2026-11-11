@@ -3,13 +3,22 @@ import MediaGallery from '@/components/MediaGallery';
 import { getAllMedia } from '@/lib/services/media';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Galeri Media',
   description: 'Koleksi dokumentasi foto dan video dari seluruh tulisan dan catatan perjalanan.',
 };
 
 export default async function MediaPage() {
-  const { media } = await getAllMedia({ limit: 100 });
+  let mediaList: any[] = [];
+  try {
+    const { media } = await getAllMedia({ limit: 100 });
+    mediaList = media;
+  } catch (err: any) {
+    if (err?.digest?.startsWith?.('DYNAMIC_SERVER_USAGE')) throw err;
+    console.error('Error loading media page data:', err);
+  }
 
   return (
     <PublicLayout>
@@ -23,9 +32,8 @@ export default async function MediaPage() {
       </section>
 
       <section>
-        <MediaGallery initialMedia={media} />
+        <MediaGallery initialMedia={mediaList} />
       </section>
     </PublicLayout>
   );
 }
-

@@ -1,9 +1,12 @@
 import PublicLayout from '@/components/PublicLayout';
 import PostCard from '@/components/PostCard';
 import { getPublishedPosts } from '@/lib/services/posts';
-import { getSiteSettings } from '@/lib/services/settings';
+import { getSiteSettings, DEFAULT_SETTINGS } from '@/lib/services/settings';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import type { Post } from '@/types/database';
+
+export const dynamic = 'force-dynamic';
 
 interface HomeProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -15,10 +18,22 @@ export default async function HomePage({ searchParams }: HomeProps) {
   const limit = 8;
   const offset = (page - 1) * limit;
 
-  const [{ posts, total }, settings] = await Promise.all([
-    getPublishedPosts({ limit, offset }),
-    getSiteSettings(),
-  ]);
+  let posts: Post[] = [];
+  let total = 0;
+  let settings = DEFAULT_SETTINGS;
+
+  try {
+    const [postsRes, settingsRes] = await Promise.all([
+      getPublishedPosts({ limit, offset }),
+      getSiteSettings(),
+    ]);
+    posts = postsRes.posts;
+    total = postsRes.total;
+    settings = settingsRes;
+  } catch (err: any) {
+    if (err?.digest?.startsWith?.('DYNAMIC_SERVER_USAGE')) throw err;
+    console.error('Error loading home page data:', err);
+  }
 
   const totalPages = Math.ceil(total / limit);
 
