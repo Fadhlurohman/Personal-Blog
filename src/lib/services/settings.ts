@@ -3,7 +3,7 @@ import type { SiteSettings, Profile } from '@/types/database';
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   id: '00000000-0000-0000-0000-000000000001',
-  site_name: 'Personal Blog',
+  site_name: 'The Memoir',
   site_description: 'Ruang digital pribadi untuk membagikan tulisan, cerita, foto, dan video.',
   social_links: {
     github: '',

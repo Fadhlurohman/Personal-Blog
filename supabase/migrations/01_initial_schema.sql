@@ -1,5 +1,5 @@
 -- ============================================================
--- PERSONAL BLOG & DIGITAL JOURNAL - SUPABASE SCHEMA MIGRATION
+-- The Memoir - SUPABASE SCHEMA MIGRATION
 -- ============================================================
 
 -- Enable pgcrypto for UUID generation
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS public.comments (
 -- 5. SITE SETTINGS TABLE
 CREATE TABLE IF NOT EXISTS public.site_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  site_name TEXT NOT NULL DEFAULT 'Personal Blog & Digital Journal',
+  site_name TEXT NOT NULL DEFAULT 'The Memoir',
   site_description TEXT NOT NULL DEFAULT 'Ruang digital pribadi untuk membagikan tulisan, pemikiran, cerita, foto, dan video.',
   social_links JSONB NOT NULL DEFAULT '{"github": "", "twitter": "https://x.com/navntn", "instagram": "https://instagram.com/navntn", "linkedin": "", "email": "fadhlurohmanfn@gmail.com"}'::jsonb,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()

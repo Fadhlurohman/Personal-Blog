@@ -46,7 +46,7 @@ export default function AdminNav() {
           className="group flex items-center gap-2 mb-6 px-2 font-serif text-lg font-medium tracking-tight text-stone-900 dark:text-stone-100 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
         >
           <Feather className="w-5 h-5 text-stone-700 dark:text-stone-300 group-hover:rotate-12 transition-transform" />
-          <span>Catatan Pribadi</span>
+          <span>The Memoir</span>
         </Link>
 
         <nav className="space-y-1">
