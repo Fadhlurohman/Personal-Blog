@@ -69,7 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_comments_post_id ON public.comments(post_id);
 CREATE INDEX IF NOT EXISTS idx_comments_owner_token_hash ON public.comments(owner_token_hash);
 
 -- ============================================================
--- ROW LEVEL SECURITY (RLS) POLICIES
+-- ROW LEVEL SECURITY (RLS) POLICIES (Idempotent with DROP IF EXISTS)
 -- ============================================================
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
@@ -78,57 +78,70 @@ ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
 -- PROFILES POLICIES
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON public.profiles;
 CREATE POLICY "Public profiles are viewable by everyone" 
   ON public.profiles FOR SELECT 
   USING (TRUE);
 
+DROP POLICY IF EXISTS "Authenticated users can update profile" ON public.profiles;
 CREATE POLICY "Authenticated users can update profile" 
   ON public.profiles FOR UPDATE 
   USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can insert profile" ON public.profiles;
 CREATE POLICY "Authenticated users can insert profile" 
   ON public.profiles FOR INSERT 
   WITH CHECK (auth.role() = 'authenticated');
 
 -- POSTS POLICIES
+DROP POLICY IF EXISTS "Published posts are viewable by everyone" ON public.posts;
 CREATE POLICY "Published posts are viewable by everyone" 
   ON public.posts FOR SELECT 
   USING (status = 'published' OR auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Only authenticated admin can insert posts" ON public.posts;
 CREATE POLICY "Only authenticated admin can insert posts" 
   ON public.posts FOR INSERT 
   WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Only authenticated admin can update posts" ON public.posts;
 CREATE POLICY "Only authenticated admin can update posts" 
   ON public.posts FOR UPDATE 
   USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Only authenticated admin can delete posts" ON public.posts;
 CREATE POLICY "Only authenticated admin can delete posts" 
   ON public.posts FOR DELETE 
   USING (auth.role() = 'authenticated');
 
 -- MEDIA POLICIES
+DROP POLICY IF EXISTS "Media is viewable by everyone" ON public.media;
 CREATE POLICY "Media is viewable by everyone" 
   ON public.media FOR SELECT 
   USING (TRUE);
 
+DROP POLICY IF EXISTS "Only authenticated admin can insert media" ON public.media;
 CREATE POLICY "Only authenticated admin can insert media" 
   ON public.media FOR INSERT 
   WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Only authenticated admin can update media" ON public.media;
 CREATE POLICY "Only authenticated admin can update media" 
   ON public.media FOR UPDATE 
   USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Only authenticated admin can delete media" ON public.media;
 CREATE POLICY "Only authenticated admin can delete media" 
   ON public.media FOR DELETE 
   USING (auth.role() = 'authenticated');
 
 -- COMMENTS POLICIES
+DROP POLICY IF EXISTS "Visible comments on published posts are viewable by everyone" ON public.comments;
 CREATE POLICY "Visible comments on published posts are viewable by everyone" 
   ON public.comments FOR SELECT 
   USING (is_hidden = FALSE OR auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Anyone can insert a valid comment" ON public.comments;
 CREATE POLICY "Anyone can insert a valid comment" 
   ON public.comments FOR INSERT 
   WITH CHECK (
@@ -137,23 +150,28 @@ CREATE POLICY "Anyone can insert a valid comment"
     char_length(owner_token_hash) = 64
   );
 
+DROP POLICY IF EXISTS "Authenticated admin can update comments" ON public.comments;
 CREATE POLICY "Authenticated admin can update comments" 
   ON public.comments FOR UPDATE 
   USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated admin can delete comments" ON public.comments;
 CREATE POLICY "Authenticated admin can delete comments" 
   ON public.comments FOR DELETE 
   USING (auth.role() = 'authenticated');
 
 -- SITE SETTINGS POLICIES
+DROP POLICY IF EXISTS "Site settings are viewable by everyone" ON public.site_settings;
 CREATE POLICY "Site settings are viewable by everyone" 
   ON public.site_settings FOR SELECT 
   USING (TRUE);
 
+DROP POLICY IF EXISTS "Only authenticated admin can update site settings" ON public.site_settings;
 CREATE POLICY "Only authenticated admin can update site settings" 
   ON public.site_settings FOR UPDATE 
   USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Only authenticated admin can insert site settings" ON public.site_settings;
 CREATE POLICY "Only authenticated admin can insert site settings" 
   ON public.site_settings FOR INSERT 
   WITH CHECK (auth.role() = 'authenticated');
@@ -166,18 +184,22 @@ VALUES ('media', 'media', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage Policies
+DROP POLICY IF EXISTS "Media bucket is publicly accessible" ON storage.objects;
 CREATE POLICY "Media bucket is publicly accessible"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'media');
 
+DROP POLICY IF EXISTS "Authenticated admin can upload media" ON storage.objects;
 CREATE POLICY "Authenticated admin can upload media"
   ON storage.objects FOR INSERT
   WITH CHECK (bucket_id = 'media' AND auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated admin can update media" ON storage.objects;
 CREATE POLICY "Authenticated admin can update media"
   ON storage.objects FOR UPDATE
   USING (bucket_id = 'media' AND auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated admin can delete media" ON storage.objects;
 CREATE POLICY "Authenticated admin can delete media"
   ON storage.objects FOR DELETE
   USING (bucket_id = 'media' AND auth.role() = 'authenticated');
@@ -223,4 +245,3 @@ DROP TRIGGER IF EXISTS on_site_settings_updated ON public.site_settings;
 CREATE TRIGGER on_site_settings_updated
   BEFORE UPDATE ON public.site_settings
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
-
