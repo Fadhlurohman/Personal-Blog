@@ -53,7 +53,7 @@ export async function getPublishedPosts({
   const { data, count, error } = await query;
 
   if (error) {
-    console.error('Error fetching published posts:', error);
+    console.error('Error fetching published posts:', error.message || error);
     return { posts: [], total: 0 };
   }
 

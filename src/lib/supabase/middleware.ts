@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { getCleanSupabaseUrl } from '@/lib/supabase/config';
 import type { Database } from '@/types/database';
 
 export async function updateSession(request: NextRequest) {
@@ -9,7 +10,7 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseUrl = getCleanSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
   // If Supabase is not configured yet, let requests pass through gracefully
@@ -65,4 +66,3 @@ export async function updateSession(request: NextRequest) {
 
   return response;
 }
-
