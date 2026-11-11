@@ -7,10 +7,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   site_description: 'Ruang digital pribadi untuk membagikan tulisan, cerita, foto, dan video.',
   social_links: {
     github: '',
-    twitter: '',
-    instagram: '',
+    twitter: 'https://x.com/navntn',
+    instagram: 'https://instagram.com/navntn',
     linkedin: '',
-    email: '',
+    email: 'fadhlurohmanfn@gmail.com',
   },
   updated_at: new Date().toISOString(),
 };

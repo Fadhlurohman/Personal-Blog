@@ -8,11 +8,12 @@ VALUES (
   '00000000-0000-0000-0000-000000000001',
   'Catatan Pribadi',
   'Ruang digital minimalis untuk berbagi tulisan, cerita, foto, dan video perjalanan hidup.',
-  '{"github": "https://github.com", "twitter": "https://twitter.com", "instagram": "https://instagram.com", "linkedin": "", "email": "hello@example.com"}'::jsonb
+  '{"github": "", "twitter": "https://x.com/navntn", "instagram": "https://instagram.com/navntn", "linkedin": "", "email": "fadhlurohmanfn@gmail.com"}'::jsonb
 )
 ON CONFLICT (id) DO UPDATE SET
   site_name = EXCLUDED.site_name,
-  site_description = EXCLUDED.site_description;
+  site_description = EXCLUDED.site_description,
+  social_links = EXCLUDED.social_links;
 
 -- 2. First Welcome Post
 INSERT INTO public.posts (id, title, slug, content, status, published_at, comments_enabled)
