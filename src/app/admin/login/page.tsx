@@ -50,7 +50,7 @@ function LoginForm() {
           className="inline-flex items-center gap-2 font-serif text-xl font-bold text-stone-900 dark:text-stone-100 hover:opacity-80 transition mb-3"
         >
           <Feather className="w-5 h-5 text-stone-700 dark:text-stone-300" />
-          <span>Journal</span>
+          <span>Catatan Pribadi</span>
         </Link>
         <h1 className="text-xl font-semibold text-stone-800 dark:text-stone-200">
           Masuk Administrator

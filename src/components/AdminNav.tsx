@@ -10,6 +10,7 @@ import {
   Settings,
   ExternalLink,
   LogOut,
+  Feather,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -40,14 +41,13 @@ export default function AdminNav() {
   return (
     <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/30 p-4 sm:p-6 flex flex-col justify-between shrink-0">
       <div>
-        <div className="flex items-center justify-between md:justify-start gap-2 mb-6 px-2">
-          <span className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100">
-            Admin Panel
-          </span>
-          <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
-            v1.0
-          </span>
-        </div>
+        <Link
+          href="/"
+          className="group flex items-center gap-2 mb-6 px-2 font-serif text-lg font-medium tracking-tight text-stone-900 dark:text-stone-100 hover:text-stone-600 dark:hover:text-stone-300 transition-colors"
+        >
+          <Feather className="w-5 h-5 text-stone-700 dark:text-stone-300 group-hover:rotate-12 transition-transform" />
+          <span>Catatan Pribadi</span>
+        </Link>
 
         <nav className="space-y-1">
           {navItems.map((item) => {
